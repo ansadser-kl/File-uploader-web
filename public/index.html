@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Xeno Drive</title>
+<script>try{var t=localStorage.getItem('xd_t')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}</script>
+<style>
+:root{--bg:#f6f8fc;--card:#fff;--bd:#e5e9f2;--tx:#0f172a;--mu:#64748b;--pr:#2563eb;--ok:#059669;--er:#e11d48;--hv:#f1f5f9;--bg2:#f8fafc;--bar:#e2e8f0;--dz:#cbd5e1;--ring:#fff;--lv:#ecfdf5;--lvb:#a7f3d0;color-scheme:light}
+:root[data-theme=dark]{--bg:#0b1020;--card:#121a2e;--bd:#25304a;--tx:#e5e9f5;--mu:#94a3b8;--ok:#34d399;--er:#fb7185;--hv:#1b2640;--bg2:#0f172a;--bar:#25304a;--dz:#3b4a6b;--ring:#121a2e;--lv:#06281f;--lvb:#0f5132;color-scheme:dark}
+body,.card,.btn,.drop{transition:background .25s,color .25s,border-color .25s}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.w{max-width:980px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px}
+header.card{display:flex;align-items:center;gap:10px;padding:12px 16px;margin-bottom:16px}
+.logo{width:34px;height:34px;border-radius:50%;background:var(--pr);color:#fff;display:grid;place-items:center;font-weight:700;overflow:hidden;box-shadow:0 0 0 2px var(--ring),0 0 0 4px var(--pr);transition:box-shadow .3s}
+.logo img{width:100%;height:100%;object-fit:cover;display:block}
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:-2px;margin-right:6px;background:conic-gradient(#f43f5e,#f59e0b,#10b981,#06b6d4,#6366f1,#d946ef,#f43f5e);animation:sp 3s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+#clr{border-color:var(--pr);color:var(--pr)}
+.sp{flex:1}
+.btn{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:9px;padding:7px 12px;font:inherit;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--hv)}
+.pri{background:var(--pr);border-color:var(--pr);color:#fff;width:100%;padding:11px}
+.pri:hover{filter:brightness(.9)}
+.pri:disabled{opacity:.5;cursor:not-allowed}
+.live{font:600 11px ui-monospace,monospace;color:var(--ok);background:var(--lv);border:1px solid var(--lvb);border-radius:6px;padding:3px 8px}
+.live.off{color:var(--er);background:transparent;border-color:var(--er)}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.g{grid-template-columns:1fr}}
+h2{margin:0 0 4px;font-size:18px}
+.mu{color:var(--mu);font-size:13px}
+.drop{margin:14px 0;border:2px dashed var(--dz);border-radius:12px;padding:26px 10px;text-align:center;cursor:pointer;background:var(--bg2)}
+.drop:hover,.drop.on{border-color:var(--pr);background:color-mix(in srgb,var(--pr) 10%,var(--card))}
+.st{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.st div{border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
+.st small{display:block;color:var(--mu);font:600 10px ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase}
+.st b{font-size:18px}
+.bar{height:8px;background:var(--bar);border-radius:9px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--pr);transition:width .4s}
+.row{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--bd)}
+.row:first-child{border-top:0}
+.nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.ic{border:0;background:none;cursor:pointer;color:var(--mu);padding:5px 7px;border-radius:7px;font:inherit}
+.ic:hover{background:var(--hv);color:var(--tx)}
+.up{margin-top:10px;font-size:13px}
+.up .bar{margin:4px 0 8px}
+.lk{display:flex;gap:6px;margin-top:6px}
+.lk input{flex:1;min-width:0;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;font:12px ui-monospace,monospace;background:var(--card);color:var(--tx)}
+.m{position:fixed;inset:0;background:rgba(2,6,23,.55);display:none;align-items:center;justify-content:center;padding:14px;z-index:9}
+.m.on{display:flex}
+.m .card{max-width:760px;width:100%;max-height:90vh;overflow:auto}
+pre{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:12px;overflow:auto;font:12px/1.5 ui-monospace,monospace;margin:6px 0 0}
+.ep{border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin:8px 0}
+.ep code{font:600 12px ui-monospace,monospace}
+.v{display:inline-block;min-width:54px;text-align:center;border-radius:5px;padding:1px 6px;margin-right:8px;font:700 11px ui-monospace,monospace;color:#fff}
+.GET{background:#059669}.POST{background:#2563eb}.PUT{background:#d97706}.DELETE{background:#e11d48}.PATCH{background:#7c3aed}
+#toast{position:fixed;left:50%;top:14px;transform:translateX(-50%);background:#334155;color:#fff;padding:8px 14px;border-radius:9px;display:none;z-index:99}
+footer{text-align:center;color:var(--mu);font-size:12px;padding:20px}
+a{color:var(--pr);cursor:pointer;text-decoration:none}
+/* admin only */
+#files{display:none}
+#files.on{display:block}
+#lerr{color:var(--er);font-size:13px;min-height:18px;margin-top:6px}
+#pw{width:100%;margin-top:10px;padding:10px;border:1px solid var(--bd);border-radius:9px;font:inherit;background:var(--card);color:var(--tx)}
+</style>
+</head>
+<body>
+<div class="w">
+  <header class="card">
+    <div class="logo" id="logo"><img src="https://i.ibb.co/8nLcV1rm/Gemini-Generated-Image-77quw477quw477qu-clean-888mb.jpg" alt="X" width="34" height="34" decoding="async" onerror="this.remove();document.getElementById('logo').textContent='X'"></div><b>Xeno Drive</b><span class="sp"></span>
+    <button class="btn" id="thm" title="Dark / light mode" aria-label="Toggle dark mode">&#9790;</button>
+    <button class="btn" id="clr" title="Change color"><span class="dot"></span>Color</button>
+    <button class="btn" id="admBtn">Admin</button>
+    <button class="btn" id="apiBtn">&lt;/&gt; API</button>
+    <span class="live" id="live">&bull; LIVE</span>
+  </header>
+
+  <div class="g">
+    <section class="card">
+      <h2>Upload file</h2>
+      <p class="mu" style="margin:0">Fast chunked upload, up to 2 GB per file.</p>
+      <div class="drop" id="drop"><div style="font-size:26px">&#9729;</div><b id="dropT">Select or drop a file</b><div class="mu">Max size: 2GB</div></div>
+      <button class="btn pri" id="goBtn" disabled>Start upload</button>
+      <div id="ups"></div>
+    </section>
+
+    <section class="card">
+      <h2>Storage</h2>
+      <div class="st">
+        <div><small>Total files</small><b id="sF">–</b></div>
+        <div><small>Storage used</small><b id="sU">–</b></div>
+        <div><small>Downloads</small><b id="sD">–</b></div>
+        <div><small>In trash</small><b id="sT">–</b></div>
+      </div>
+      <div class="bar"><i id="bar"></i></div>
+      <p class="mu" style="margin:8px 0 0" id="sC">Channel: –</p>
+    </section>
+  </div>
+
+  <!-- ADMIN ONLY: hidden until login -->
+  <section class="card" id="files" style="margin-top:16px">
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:6px">
+      <h2 style="margin:0;flex:1">My files</h2>
+      <input id="q" placeholder="Search" style="padding:7px 10px;border:1px solid var(--bd);border-radius:9px;font:inherit;width:160px;background:var(--card);color:var(--tx)">
+    </div>
+    <div id="list"><p class="mu">Loading…</p></div>
+  </section>
+  <footer>&copy; 2026 Xeno Drive &middot; <a id="apiLink">API Docs</a></footer>
+</div>
+
+<input type="file" id="fi" multiple hidden>
+
+<!-- Admin login -->
+<div class="m" id="login"><div class="card" style="max-width:340px">
+  <h2>Admin login</h2>
+  <input id="pw" type="password" placeholder="Password" autocomplete="off">
+  <div id="lerr"></div>
+  <div style="display:flex;gap:8px;margin-top:8px"><button class="btn pri" id="lgo">Login</button><button class="btn" id="lx">Cancel</button></div>
+</div></div>
+
+<!-- API docs -->
+<div class="m" id="docs"><div class="card">
+  <div style="display:flex;align-items:center"><h2 style="flex:1">API Docs</h2><button class="btn" id="dx">Close</button></div>
+  <p class="mu">Base URL <code id="bu"></code> &middot; No password or login required. Errors return <code>{"error": "message"}</code>.</p>
+  <div id="eps"></div>
+  <h3 style="margin:16px 0 0">Quick start</h3>
+  <pre id="cu"></pre>
+  <h3 style="margin:16px 0 0">Upload flow (JavaScript)</h3>
+  <pre id="js"></pre>
+</div></div>
+<div id="toast"></div>
+
+<script>
+const BASE = location.origin === 'https://xenoexex.onrender.com' ? '' : 'https://xenoexex.onrender.com';
+const SHOW = 'https://xenoexex.onrender.com';
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sz = (n) => { const u = ['B','KB','MB','GB','TB']; let i = 0; while (n >= 1024 && i < 4) { n /= 1024; i++; } return n.toFixed(i ? 1 : 0) + ' ' + u[i]; };
+const CHUNK = 8 * 1024 * 1024, MAX = 2 * 1024 ** 3 - 1;
+let files = [], picked = [], q = '', stats = null, adm = false;
+
+function toast(m) { const t = $('#toast'); t.textContent = m; t.style.display = 'block'; clearTimeout(toast.t); toast.t = setTimeout(() => t.style.display = 'none', 2600); }
+async function api(path, o = {}) {
+  const r = await fetch(BASE + path, { ...o, headers: { ...(typeof o.body === 'string' ? { 'Content-Type': 'application/json' } : {}), ...o.headers } });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || r.statusText);
+  return d;
+}
+
+/* data */
+async function refresh() {
+  try {
+    const s = await api('/api/stats');
+    stats = s;
+    $('#sF').textContent = s.files; $('#sU').textContent = sz(s.bytes); $('#sD').textContent = s.downloads; $('#sT').textContent = s.trashFiles;
+    $('#sC').textContent = 'Channel: ' + s.channel;
+    $('#bar').style.width = Math.min(100, s.bytes / (50 * 1024 ** 3) * 100) + '%';
+    $('#live').className = 'live'; $('#live').textContent = '\u2022 LIVE';
+    if (adm) { files = await api('/api/files?view=files&q=' + encodeURIComponent(q)); draw(); }
+  } catch (e) { $('#live').className = 'live off'; $('#live').textContent = '\u2022 OFFLINE'; toast(e.message); }
+}
+function draw() {
+  $('#list').innerHTML = files.length ? files.map((f) => `<div class="row"><span class="nm" title="${esc(f.name)}">${esc(f.name)}</span><span class="mu">${sz(f.size)}</span>
+    <button class="ic" data-a="dl" data-i="${f.id}" title="Download">&#8681;</button>
+    <button class="ic" data-a="cp" data-i="${f.id}" title="Copy link">&#128279;</button>
+    <button class="ic" data-a="rm" data-i="${f.id}" title="Trash">&#128465;</button></div>`).join('') : '<p class="mu">No files yet.</p>';
+}
+$('#list').onclick = async (e) => {
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const f = files.find((x) => x.id === +b.dataset.i); if (!f) return;
+  try {
+    if (b.dataset.a === 'dl') location.href = `${BASE}/api/files/${f.id}/stream?download=1`;
+    else if (b.dataset.a === 'cp') { await navigator.clipboard.writeText(f.link); toast('Link copied'); }
+    else { await api(`/api/files/${f.id}/trash`, { method: 'POST' }); toast('Moved to trash'); refresh(); }
+  } catch (err) { toast(err.message); }
+};
+let st; $('#q').oninput = (e) => { clearTimeout(st); st = setTimeout(() => { q = e.target.value.trim(); refresh(); }, 250); };
+
+/* upload */
+const drop = $('#drop');
+drop.onclick = () => $('#fi').click();
+$('#fi').onchange = (e) => pick(e.target.files);
+['dragover', 'dragenter'].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.add('on'); }));
+['dragleave', 'drop'].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.remove('on'); }));
+drop.addEventListener('drop', (e) => pick(e.dataTransfer.files));
+function pick(l) {
+  picked = [...l].filter((f) => { if (!f.size) { toast(f.name + ' is empty'); return false; } if (f.size > MAX) { toast(f.name + ' is over 2 GB'); return false; } return true; });
+  $('#dropT').textContent = picked.length ? picked.map((f) => f.name).join(', ').slice(0, 60) : 'Select or drop a file';
+  $('#goBtn').disabled = !picked.length;
+}
+$('#goBtn').onclick = async () => {
+  const batch = picked; picked = []; $('#goBtn').disabled = true; $('#dropT').textContent = 'Select or drop a file'; $('#fi').value = '';
+  await Promise.all(batch.map(upload));
+};
+function put(id, i, blob) {
+  return new Promise((res, rej) => {
+    let t = 0;
+    const go = () => {
+      const x = new XMLHttpRequest();
+      x.open('PUT', `${BASE}/api/upload/${id}/chunk?index=${i}`);
+      x.setRequestHeader('Content-Type', 'application/octet-stream');
+      x.onload = () => x.status === 200 ? res() : x.status === 401 ? rej(new Error('Session expired')) : retry();
+      x.onerror = retry; x.send(blob);
+    };
+    const retry = () => ++t > 3 ? rej(new Error('Upload failed')) : setTimeout(go, 800 * t);
+    go();
+  });
+}
+async function findFile(file, s) {
+  if (s && s.file && s.file.link) return s.file;
+  if (s && s.link) return s;
+  try {
+    const l = await api('/api/files?view=files&q=' + encodeURIComponent(file.name));
+    return l.filter((x) => x.size === file.size).sort((a, b) => b.id - a.id)[0];
+  } catch {}
+}
+async function upload(file) {
+  const el = document.createElement('div'); el.className = 'up';
+  el.innerHTML = `<div class="nm">${esc(file.name)}</div><div class="bar"><i></i></div><span class="mu">Starting…</span>`;
+  $('#ups').prepend(el);
+  const bar = el.querySelector('i'), lbl = el.querySelector('span');
+  try {
+    const { id } = await api('/api/upload/init', { method: 'POST', body: JSON.stringify({ name: file.name, size: file.size, mime: file.type }) });
+    const n = Math.ceil(file.size / CHUNK);
+    for (let i = 0; i < n; i++) {
+      await put(id, i, file.slice(i * CHUNK, (i + 1) * CHUNK));
+      bar.style.width = ((i + 1) / n * 90) + '%'; lbl.textContent = `Uploading ${Math.round((i + 1) / n * 100)}%`;
+    }
+    lbl.textContent = 'Processing…';
+    await api(`/api/upload/${id}/complete`, { method: 'POST' });
+    let s;
+    for (;;) {
+      await new Promise((r) => setTimeout(r, 1000));
+      s = await api(`/api/upload/${id}`);
+      bar.style.width = (90 + (s.tgProgress || 0) * 10) + '%';
+      if (s.status === 'done') break;
+      if (s.status === 'error') throw new Error(s.error || 'Upload failed');
+    }
+    bar.style.width = '100%'; bar.style.background = 'var(--ok)'; lbl.textContent = 'Done';
+    /* show link under the uploaded file */
+    const f = await findFile(file, s);
+    if (f && f.link) {
+      const row = document.createElement('div'); row.className = 'lk';
+      const inp = document.createElement('input'); inp.readOnly = true; inp.value = f.link; inp.onclick = () => inp.select();
+      const cb = document.createElement('button'); cb.className = 'btn'; cb.textContent = 'Copy';
+      cb.onclick = async () => { try { await navigator.clipboard.writeText(f.link); toast('Link copied'); } catch { inp.select(); } };
+      row.append(inp, cb); el.append(row);
+    }
+    refresh();
+  } catch (e) { bar.style.background = 'var(--er)'; lbl.textContent = e.message; }
+}
+
+/* theme */
+function setTheme(t, save) {
+  document.documentElement.dataset.theme = t;
+  $('#thm').innerHTML = t === 'dark' ? '&#9728;' : '&#9790;';
+  $('#thm').title = t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+  if (save) try { localStorage.setItem('xd_t', t); } catch {}
+}
+setTheme(document.documentElement.dataset.theme || 'light');
+$('#thm').onclick = () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark', true);
+
+/* colors */
+const PAL = ['#2563eb', '#7c3aed', '#db2777', '#ea580c', '#059669', '#0891b2', 'rainbow'];
+let ci = 0, rt;
+try { ci = (+localStorage.getItem('xd_c') || 0) % PAL.length; } catch {}
+function applyColor(say) {
+  clearInterval(rt);
+  const r = document.documentElement.style;
+  if (PAL[ci] === 'rainbow') { let h = 220; rt = setInterval(() => { h = (h + 2) % 360; r.setProperty('--pr', `hsl(${h} 80% 50%)`); }, 80); if (say) toast('Rainbow mode'); }
+  else r.setProperty('--pr', PAL[ci]);
+  try { localStorage.setItem('xd_c', ci); } catch {}
+}
+$('#clr').onclick = () => { ci = (ci + 1) % PAL.length; applyColor(true); };
+applyColor();
+
+/* admin login (SHA-256 hash, password not stored in plain text) */
+const PW_HASH = '2ce3083f9e3bb0e7d109cf3cbbd20805fda2356e74d78c8622bac0218a48fad2';
+const sha = async (s) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)))].map((x) => x.toString(16).padStart(2, '0')).join('');
+function setAdmin(on) {
+  adm = on;
+  $('#files').classList.toggle('on', on);
+  $('#admBtn').textContent = on ? 'Logout' : 'Admin';
+  if (!on) { files = []; $('#list').innerHTML = ''; }
+  try { on ? sessionStorage.setItem('xd_a', '1') : sessionStorage.removeItem('xd_a'); } catch {}
+  if (on) refresh();
+}
+async function doLogin() {
+  if (await sha($('#pw').value) === PW_HASH) { $('#pw').value = ''; $('#lerr').textContent = ''; $('#login').classList.remove('on'); setAdmin(true); }
+  else { $('#lerr').textContent = 'Wrong password'; }
+}
+$('#admBtn').onclick = () => {
+  if (adm) return setAdmin(false);
+  $('#login').classList.add('on'); setTimeout(() => $('#pw').focus(), 50);
+};
+$('#lgo').onclick = doLogin;
+$('#lx').onclick = () => $('#login').classList.remove('on');
+$('#pw').onkeydown = (e) => { if (e.key === 'Enter') doLogin(); };
+$('#login').onclick = (e) => { if (e.target.id === 'login') $('#login').classList.remove('on'); };
+try { if (sessionStorage.getItem('xd_a')) adm = true; } catch {}
+if (adm) { $('#files').classList.add('on'); $('#admBtn').textContent = 'Logout'; }
+
+/* docs */
+const EPS = [
+  ['GET', '/api/stats', 'Storage stats: files, bytes, downloads, trashFiles, trashBytes, channel.'],
+  ['GET', '/api/files?view=files&q=&sort=', 'List files. view: files | trash. sort: name | size | downloads (omit for newest).'],
+  ['POST', '/api/upload/init', 'Start an upload. Body: {"name","size","mime"}. Returns {"id"}.'],
+  ['PUT', '/api/upload/:id/chunk?index=N', 'Send chunk N (8 MB each, raw bytes, application/octet-stream).'],
+  ['POST', '/api/upload/:id/complete', 'Finish the upload and start processing.'],
+  ['GET', '/api/upload/:id', 'Poll status: {"status": "done|error|…", "tgProgress", "error"}.'],
+  ['DELETE', '/api/upload/:id', 'Cancel an upload.'],
+  ['GET', '/api/files/:id/stream', 'Stream a file. Add ?download=1 to force download.'],
+  ['PATCH', '/api/files/:id', 'Rename. Body: {"name": "new.ext"}.'],
+  ['POST', '/api/files/:id/share', 'Share settings. Body: {"password","keepPassword","expiresInHours"}. Returns the file with its link.'],
+  ['POST', '/api/files/:id/trash', 'Move to trash.'],
+  ['POST', '/api/files/:id/restore', 'Restore from trash.'],
+  ['DELETE', '/api/files/:id', 'Delete forever.'],
+  ['POST', '/api/trash/empty', 'Empty the trash.']
+];
+$('#bu').textContent = SHOW;
+$('#eps').innerHTML = EPS.map(([m, p, d]) => `<div class="ep"><span class="v ${m}">${m}</span><code>${esc(p)}</code><div class="mu">${esc(d)}</div></div>`).join('');
+$('#cu').textContent = `# stats
+curl ${SHOW}/api/stats
+
+# list files
+curl "${SHOW}/api/files?view=files"
+
+# download
+curl -OJ "${SHOW}/api/files/1/stream?download=1"`;
+$('#js').textContent = `const B = '${SHOW}', CHUNK = 8 * 1024 * 1024;
+const j = (p, o = {}) => fetch(B + p, { ...o }).then(r => r.json());
+
+async function upload(file) {
+  const { id } = await j('/api/upload/init', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: file.name, size: file.size, mime: file.type })
+  });
+  for (let i = 0; i * CHUNK < file.size; i++)
+    await fetch(B + '/api/upload/' + id + '/chunk?index=' + i, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/octet-stream' },
+      body: file.slice(i * CHUNK, (i + 1) * CHUNK)
+    });
+  await j('/api/upload/' + id + '/complete', { method: 'POST' });
+  let s; do { await new Promise(r => setTimeout(r, 1000)); s = await j('/api/upload/' + id); }
+  while (s.status !== 'done' && s.status !== 'error');
+  return s;
+}`;
+const od = () => $('#docs').classList.add('on');
+$('#apiBtn').onclick = od; $('#apiLink').onclick = od;
+$('#dx').onclick = () => $('#docs').classList.remove('on');
+$('#docs').onclick = (e) => { if (e.target.id === 'docs') $('#docs').classList.remove('on'); };
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { $('#docs').classList.remove('on'); $('#login').classList.remove('on'); } });
+
+refresh();
+</script>
+</body>
+</html>
