@@ -1,4 +1,4 @@
-//XenoExe
+//Ansadkl
 require("dotenv").config();
 const express = require("express");
 const crypto = require("crypto");
@@ -12,7 +12,7 @@ const { CustomFile } = require("telegram/client/uploads");
 
 const {
   API_ID, API_HASH, BOT_TOKEN, CHANNEL_ID,
-  PORT = 3000, SESSION_SECRET, ADMIN_PASSWORD = "", BASE_URL = "",
+  PORT = 3000, ADMIN_PASSWORD = "", BASE_URL = "",
 } = process.env;
 
 for (const [k, v] of Object.entries({ API_ID, API_HASH, BOT_TOKEN, CHANNEL_ID })) {
@@ -80,7 +80,7 @@ const safeEq = (a, b) => {
   const A = Buffer.from(String(a)), B = Buffer.from(String(b));
   return A.length === B.length && crypto.timingSafeEqual(A, B);
 };
-const SECRET = SESSION_SECRET || h(BOT_TOKEN + ADMIN_PASSWORD);
+const SECRET = h(BOT_TOKEN + ADMIN_PASSWORD);
 const sign = (v) => crypto.createHmac("sha256", SECRET).update(v).digest("base64url");
 const getCookies = (req) =>
   Object.fromEntries(
@@ -419,18 +419,18 @@ function shareState(row, req) {
 
 const shell = (title, body) => `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title>
 <style>
-  :root{--bg:#000;--panel:#0a0a0a;--line:#1f1f1f;--text:#e5e5e5;--dim:#737373;--accent:#22c55e;--err:#ef4444}
+  :root{--bg:#0f0a1f;--panel:#1a1230;--line:#2e2350;--text:#efe8ff;--dim:#a698c6;--accent:#8b5cf6;--err:#f43f5e}
   *{box-sizing:border-box}
   body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--bg);color:var(--text);font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
   main{width:100%;max-width:640px;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
   .bar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);color:var(--dim);font-size:12px}
-  .method{background:rgba(34,197,94,.12);color:var(--accent);padding:2px 8px;border-radius:4px;font-weight:600}
+  .method{background:rgba(139,92,246,.18);color:var(--accent);padding:2px 8px;border-radius:4px;font-weight:600}
   .content{padding:18px}
   h1{margin:0 0 4px;font-size:16px;font-weight:600;word-break:break-all}
   .dim{color:var(--dim)}
-  input{width:100%;margin-top:16px;padding:11px 12px;background:#000;border:1px solid var(--line);border-radius:6px;color:var(--text);font:inherit;outline:none}
+  input{width:100%;margin-top:16px;padding:11px 12px;background:#0f0a1f;border:1px solid var(--line);border-radius:6px;color:var(--text);font:inherit;outline:none}
   input:focus{border-color:var(--accent)}
-  .btn{display:block;width:100%;margin-top:16px;padding:11px;background:var(--accent);color:#000;border:0;border-radius:6px;font:inherit;font-weight:700;text-align:center;text-decoration:none;cursor:pointer}
+  .btn{display:block;width:100%;margin-top:16px;padding:11px;background:var(--accent);color:#fff;border:0;border-radius:6px;font:inherit;font-weight:700;text-align:center;text-decoration:none;cursor:pointer}
   .btn:hover{filter:brightness(1.1)}
   .err{color:var(--err);margin:8px 0 0;font-size:13px}
   .hidden{display:none}
@@ -478,7 +478,7 @@ setInterval(() => {
 
 (async () => {
   await initTelegram();
-  const srv = app.listen(PORT, () => console.log(`Xeno Drive running on http://localhost:${PORT}`));
+  const srv = app.listen(PORT, () => console.log(`Ansadkl Drive running on http://localhost:${PORT}`));
   srv.requestTimeout = 0;
   if (!db.prepare("SELECT 1 FROM files LIMIT 1").get()) recover().then((n) => n && console.log(`Restored ${n} files from Telegram`));
 })().catch((e) => { console.error("Startup failed:", e); process.exit(1); });

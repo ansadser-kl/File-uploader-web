@@ -12,9 +12,7 @@ services:
       - key: DATA_DIR
         value: /var/data
       - key: CHANNEL_ID
-        value: xenostorage
-      - key: SESSION_SECRET
-        generateValue: true
+        sync: false          # numeric ID like -100xxxxxxxxxx, set in Render dashboard
       - key: API_ID
         sync: false
       - key: API_HASH
