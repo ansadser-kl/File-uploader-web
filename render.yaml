@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: teledrive-cloud
+    runtime: node
+    plan: starter            
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: DATA_DIR
+        value: /var/data
+      - key: CHANNEL_ID
+        value: xenostorage
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: API_ID
+        sync: false
+      - key: API_HASH
+        sync: false
+      - key: BOT_TOKEN
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: BASE_URL
+        sync: false          
+    disk:
+      name: teledrive-data
+      mountPath: /var/data
+      sizeGB: 10
