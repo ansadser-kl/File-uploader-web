@@ -19,8 +19,8 @@ for (const [k, v] of Object.entries({ API_ID, API_HASH, BOT_TOKEN, CHANNEL_ID })
   if (!v) { console.error(`Missing ${k} in .env`); process.exit(1); }
 }
 
-const MAX_FILE = 4 * 1024 * 1024 * 1024;
-const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
+const MAX_FILE = 2 * 1024 * 1024 * 1024;
+const DATA_DIR = process.env.DATA_DIR || (process.env.VERCEL ? "/tmp/teledrive" : path.join(__dirname, "data"));
 const TMP_DIR = path.join(DATA_DIR, "tmp");
 fs.mkdirSync(TMP_DIR, { recursive: true });
 for (const f of fs.readdirSync(TMP_DIR)) fs.unlink(path.join(TMP_DIR, f), () => {});
@@ -166,6 +166,10 @@ async function streamFile(req, res, row, forceDownload) {
 const app = express();
 app.set("trust proxy", 1);
 app.disable("x-powered-by");
+app.use(async (req, res, next) => {
+  try { await ready; next(); }
+  catch (e) { res.status(500).json({ error: "Startup failed: " + e.message }); }
+});
 app.use((req, res, next) => {
   res.set({
     "X-Content-Type-Options": "nosniff",
@@ -476,9 +480,15 @@ setInterval(() => {
   for (const r of db.prepare("SELECT * FROM files WHERE trashed_at IS NOT NULL AND trashed_at < ?").all(Date.now() - 30 * 864e5)) destroy(r);
 }, 36e5).unref();
 
-(async () => {
+const ready = (async () => {
   await initTelegram();
+  if (!db.prepare("SELECT 1 FROM files LIMIT 1").get()) recover().then((n) => n && console.log(`Restored ${n} files from Telegram`));
+})();
+ready.catch((e) => { console.error("Startup failed:", e); if (!process.env.VERCEL) process.exit(1); });
+
+if (require.main === module) {
   const srv = app.listen(PORT, () => console.log(`Ansadkl Drive running on http://localhost:${PORT}`));
   srv.requestTimeout = 0;
-  if (!db.prepare("SELECT 1 FROM files LIMIT 1").get()) recover().then((n) => n && console.log(`Restored ${n} files from Telegram`));
-})().catch((e) => { console.error("Startup failed:", e); process.exit(1); });
+}
+
+module.exports = app;
